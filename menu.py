@@ -50,12 +50,12 @@ def show_foods(num,st,city,country):
     #show all items in menu
     print(f"{num} {st} {city} {country}")
     foods = SharedFood.all()
-    distances = []
+    distances = {}
     for food in foods:
         distances[food.shared_food_id] = food.distance_by_km_from_address(num,st,city,country)
     for item in foods:
         print(item.city)
         print(item.street_name)
         print(f"""{item}
-        distance: {distances[item.shared_food_id]}km
+        distance: {distances[item.shared_food_id]:.2f}km
         """)

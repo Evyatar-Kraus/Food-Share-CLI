@@ -7,8 +7,10 @@ from datetime import datetime
 import math
 import h3
 
+#TODO add to venv and requirements file
+
 def get_env_db_info_dict():
-    config = dotenv_values(os.path.join(os.path.dirname(__file__), '.env'))
+    config = dotenv_values(os.path.join(os.path.dirname(__file__), '../.env'))
     return config
 pg_env_details = get_env_db_info_dict()
 pg_details = {'host': pg_env_details.get('db_host'), 'user':pg_env_details.get('db_user'),
