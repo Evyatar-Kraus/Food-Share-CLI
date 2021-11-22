@@ -42,7 +42,7 @@ __TABLE_NAME ='shared_foods'
 _GIVEN_ATTRIBUTES = ['first_name', 'last_name', 'food_title',
                     'food_text', 'contact_phone', 'address'] #given when calling the class
 _SELF_GENERATED_ATTRIBUTES = ['updated_at','created_at','published','lon','lat'] #generated in __init__
-_DB_GENERATED_ATTRIBUTES = ['shared_food_id']
+pkey = 'shared_food_id'
 
 class SharedFood:
     #class attributes
@@ -50,33 +50,31 @@ class SharedFood:
     _TABLE_NAME = 'shared_foods'
     #column list for row that represent the invoked instace in the database table
     column_list = list(itertools.chain(_GIVEN_ATTRIBUTES,_SELF_GENERATED_ATTRIBUTES))
-
+    _pkey = pkey
     def __init__(self, kwargs):
         # given when calling the class
         for keyword, value in kwargs.items():
-            if keyword in _GIVEN_ATTRIBUTES:
+            if keyword in _GIVEN_ATTRIBUTES or keyword in _SELF_GENERATED_ATTRIBUTES or  keyword == pkey:
                 setattr(self, keyword, value)
             else:
                 raise ValueError(
                     "Unknown keyword argument: {!r}".format(keyword))
 
-        self.lat = None
-        self.lon = None
-        self.coordinates = {'lat':None,'lon':None}
-
-        try:
-            self.coordinates = address_to_coords(self.address)
-            self.lat = self.coordinates['lat']
-            self.lon = self.coordinates['lon']
-        except:
-            print("Error getting address coordinates - coordinates will not be saved")
+        if not hasattr(self,'lat') and not hasattr(self,'lon'):
+            try:
+                coordinates = address_to_coords(self.address)
+                self.lat = coordinates['lat']
+                self.lon = coordinates['lon']
+            except:
+                print("Error getting address coordinates - coordinates will not be saved")
 
         self.created_at = datetime.strftime(
             datetime.now(), self.format_code)
         self.updated_at = datetime.strftime(
             datetime.now(), self.format_code)
         self.published = str(False)
-        shared_food_id = self.save()
+        if not hasattr(self,'shared_food_id'):
+            self.shared_food_id = self.save()
 
     # def modify(self, **kwargs):
     #     #change details based on a passed dictionary
@@ -87,30 +85,30 @@ class SharedFood:
 
         column_list = self.column_list
         value_list = [getattr(self,key) for key in self.column_list]
-        pprint(column_list)
-        pprint(value_list)
-        col_names = sql.SQL(', ').join(sql.Identifier(n) for n in column_list )
-        values = sql.SQL(', ').join(sql.Literal(n) for n in value_list )
+        # pprint(column_list)
+        # pprint(value_list)
 
-        # query = sql.SQL("INSERT INTO {} ({}) VALUES ({}) ON CONFLICT DO NOTHING RETURNING shared_food_id").format(
-            # table_name =sql.Identifier(self._TABLE_NAME),  # table name
-            # col_names = col_names,
-            # values = values
-        # )
+        # col_names = sql.SQL(', ').join(sql.Identifier(n) for n in column_list )
+        # values = sql.SQL(', ').join(sql.Literal(n) for n in value_list )
 
         # query = f"INSERT INTO {self._TABLE_NAME} ({ ', '.join(column_list) }) VALUES ({', '.join(value_list)}) \
         #     ON CONFLICT DO NOTHING RETURNING shared_food_id;"
-        print()
-        print(len(column_list))
-        print(len(value_list))
-        query = sql.SQL("insert into {} ({col_names}) values ({values})").format(
+
+        # print()
+        # print(len(column_list))
+        # print(len(value_list))
+
+        query = sql.SQL("insert into {} ({col_names}) values ({values}) returning shared_food_id").format(
             sql.Identifier(self._TABLE_NAME),
             col_names = sql.SQL(', ').join(sql.Identifier(n) for n in column_list),
              values = sql.SQL(', ').join(sql.Literal(n) for n in value_list )
             )
-        print(query)
-        result = run_query(query,mode='w')
-        print(result)
+
+        # print(query)
+        result_tuple = run_query(query,mode='wr1')
+        shared_food_id = result_tuple[0]
+        print(f"id of created shared food: {shared_food_id}")
+        return shared_food_id
 
 
     def publish(self):
@@ -141,6 +139,52 @@ class SharedFood:
         # SELECT ST_DistanceSphere(ST_MakePoint(103.776047, 1.292149),ST_MakePoint(103.77607, 1.292212));
         return distance
         pass
+
+    @classmethod
+    def get_by_id(cls,id):
+        columns = cls.column_list.copy()
+        columns.insert(0,'shared_food_id')
+        query = sql.SQL("select {} from {} where {} = {}").format(
+            sql.SQL(', ').join(sql.Identifier(n) for n in columns),
+            sql.Identifier(cls._TABLE_NAME),
+            sql.Identifier(cls._pkey),
+            sql.Literal(id)
+        )
+
+        result = run_query(query,mode="r1")
+        zipped = list(zip(columns,result))
+        print("\nzipped")
+        print(zipped)
+        print("\ndict")
+        attr_dict = dict(zipped)
+        print(attr_dict)
+        return SharedFood(attr_dict)
+
+    @classmethod
+    def all(cls):
+        columns = cls.column_list.copy()
+        columns.insert(0,'shared_food_id')
+        query = sql.SQL("select {} from {};").format(
+            sql.SQL(', ').join(sql.Identifier(n) for n in columns),
+            sql.Identifier(cls._TABLE_NAME),
+            )
+        results = run_query(query,mode="ra")
+        # results = [dict(list(zip(columns,result)) for result in results)]
+        # print(results)
+        all_foods = []
+        for result in results:
+            food = SharedFood(dict(list(zip(columns,result))))
+            print(food)
+            all_foods.append(food)
+            # print(all_foods)
+        print('\n\n\n')
+        print(all_foods,sep="\n")
+        # print(all_foods)
+        # for result in results:
+            # print(dict(list(zip(columns,result))))
+            # print("\n\n")
+        # results = list(map(lambda res: MenuItem(res[0],res[1]),results))
+        return all_foods
 
     def to_json(self):
         # print('to_json')
@@ -179,9 +223,13 @@ class SharedFood:
         return self.date.strftime(self.format_code)
 
     def __str__(self):
-        pass
-        # return f'{self.date_str()}'
+                return f'''\n#{self.shared_food_id}: {self.food_title}
+    description: {self.food_text}
+    name: {self.first_name} {self.last_name}
+    contact phone: {self.contact_phone}
+    address: {self.address}'''
+
+
 
     def __repr__(self):
-        pass
-        # return self.__str__()
+        return f'<SharedFood id:#{self.shared_food_id}: {self.food_title}>'

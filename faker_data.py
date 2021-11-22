@@ -55,8 +55,12 @@ def faker_shared_food_generate(type=None, faker_mode=False):
 # print(faker_user_generate('published'))
 # print(faker_user_generate('contact_phone'))
 
-pprint(faker_shared_food_generate()['food_text'])
-new_food_share = SharedFood(faker_shared_food_generate())
+# pprint(faker_shared_food_generate()['food_text'])
+# new_food_share = SharedFood(faker_shared_food_generate())
 # print(vars(new_food_share))
 # print(new_food_share.user_id)
 # new_food_share.to_json()
+
+
+# print(SharedFood.get_by_id(3))
+SharedFood.all()
