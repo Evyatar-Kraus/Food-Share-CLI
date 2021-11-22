@@ -24,7 +24,11 @@ def faker_shared_food_generate(type=None, faker_mode=False):
         'food_title': fake.word(ext_word_list=food_names_list).capitalize(),
         'food_text': ' '.join(fake.sentence(ext_word_list=food_names_list).split(' ')[0:4]),
         # 'food_text':"'Cheesecake with a sprinkle of sugar'",
-        'address': fake_address or f"{fake.street_address()}, {fake.city()}, {fake.country()}",
+        # 'address': fake_address or f"{fake.street_address()}, {fake.city()}, {fake.country()}",
+        'country':'israel',
+        'city':'tel aviv',
+        'street_name':'david ben gurion',
+        'building_number':'8',
         'first_name': fake.first_name(),
         'last_name': fake.last_name(),
         'contact_phone': fake.phone_number(),
@@ -63,4 +67,4 @@ def faker_shared_food_generate(type=None, faker_mode=False):
 
 
 # print(SharedFood.get_by_id(3))
-SharedFood.all()
+SharedFood(faker_shared_food_generate())

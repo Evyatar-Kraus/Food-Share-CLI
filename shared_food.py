@@ -40,7 +40,7 @@ from location_api import address_to_coords
 __TABLE_NAME ='shared_foods'
 
 _GIVEN_ATTRIBUTES = ['first_name', 'last_name', 'food_title',
-                    'food_text', 'contact_phone', 'address'] #given when calling the class
+                    'food_text', 'contact_phone', 'country','city','street_name','building_number'] #given when calling the class
 _SELF_GENERATED_ATTRIBUTES = ['updated_at','created_at','published','lon','lat'] #generated in __init__
 pkey = 'shared_food_id'
 
@@ -60,18 +60,20 @@ class SharedFood:
                 raise ValueError(
                     "Unknown keyword argument: {!r}".format(keyword))
 
-        if not hasattr(self,'lat') and not hasattr(self,'lon'):
+        self.created_at = datetime.strftime(
+            datetime.now(), self.format_code)
+        self.updated_at = datetime.strftime(
+            datetime.now(), self.format_code)
+
+        if not hasattr(self,'lat'):
             try:
-                coordinates = address_to_coords(self.address)
+                coordinates = address_to_coords(self.building_number,self.street_name,self.city,self.country)
                 self.lat = coordinates['lat']
                 self.lon = coordinates['lon']
             except:
                 print("Error getting address coordinates - coordinates will not be saved")
 
-        self.created_at = datetime.strftime(
-            datetime.now(), self.format_code)
-        self.updated_at = datetime.strftime(
-            datetime.now(), self.format_code)
+
         self.published = str(False)
         if not hasattr(self,'shared_food_id'):
             self.shared_food_id = self.save()
@@ -133,12 +135,20 @@ class SharedFood:
             print("Error unpublishing this food")
             pass
 
-    def distance_by_km_from_address(self,address):
+    def distance_by_km_from_address(self,num,st,city,country):
         # get distance from user - or from coordinates
-        distance = get_distance(address_to_coords(address))
-        # SELECT ST_DistanceSphere(ST_MakePoint(103.776047, 1.292149),ST_MakePoint(103.77607, 1.292212));
+        address_coords = address_to_coords(num,st,city,country)
+        address_lat = float(address_coords['lat'])
+        address_lon = float(address_coords['lon'])
+        # print(address_to_coords)
+        print("measure distance")
+        print(self.lat,self.lon)
+        print(address_lat,address_lon)
+        distance = get_distance(address_lat,address_lon,self.lat,self.lon )
+        print(distance)
         return distance
-        pass
+        # return f"{distance:.2f}km"
+
 
     @classmethod
     def get_by_id(cls,id):
@@ -227,7 +237,7 @@ class SharedFood:
     description: {self.food_text}
     name: {self.first_name} {self.last_name}
     contact phone: {self.contact_phone}
-    address: {self.address}'''
+    city: {self.city}'''
 
 
 
