@@ -7,8 +7,8 @@ This application uses open street api for getting the coordinates from an addres
 and the h3 package by uber to measure the distance between the user's address to the other users sharings.
 
 # instructions
-take .env.example file - change it to .env
-put it one folder above root of this application and fill the details there
+take .env.example file - change it to .env\
+put it one folder above root of this application and fill the details there\
 to allow connection to the db
 
 script to create the table
