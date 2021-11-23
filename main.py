@@ -1,11 +1,6 @@
-from shared_food import SharedFood
-from menu import  show_user_menu, show_foods, add_food, remove_food
+from menu import  show_user_menu, show_foods, add_food, remove_food, get_specific_food, show_start_greeting
 
-def show_start_greeting():
-    print("Welcome to food share!")
-    print("""Here you can share food you don't want with your neighbors!
-Or get something tasty to eat... and avoid waste all together!
-\n""")
+
 
 def main():
     show_start_greeting()
@@ -16,10 +11,12 @@ def main():
     while(user_input := show_user_menu()):
         if user_input == 's':
             show_foods(street_number,street_name,city,country)
-        elif user_input == 'b':
+        elif user_input == 'd':
             remove_food()
         elif user_input == 'a':
             add_food()
+        elif user_input == 'g':
+            get_specific_food()
         elif user_input == 'x':
             print("Good Bye!")
             break
