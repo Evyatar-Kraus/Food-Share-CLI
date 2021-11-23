@@ -30,5 +30,5 @@ table create script
     lon double precision,
     created_at DATE NOT NULL DEFAULT CURRENT_DATE,
     updated_at DATE NOT NULL DEFAULT CURRENT_DATE,
-    published BOOLEAN NOT NULL DEFAULT TRUE ,
+    published BOOLEAN NOT NULL DEFAULT TRUE
 );
