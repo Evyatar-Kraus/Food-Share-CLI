@@ -1,7 +1,5 @@
 from shared_food import SharedFood
 from faker import Faker
-# from faker import providers.address
-from pprint import pprint
 
 fake = Faker()
 
@@ -49,22 +47,11 @@ def faker_shared_food_generate(type=None, faker_mode=False):
 
 # print(faker_user_generate())
 # print(faker_user_generate('user_id'))
-# print(faker_user_generate('food_title'))
-# print(faker_user_generate('food_text'))
-# print(faker_user_generate('address'))
-# print(faker_user_generate('first_name'))
-# print(faker_user_generate('last_name'))
-# print(faker_user_generate('created_date'))
-# print(faker_user_generate('updated_at'))
-# print(faker_user_generate('published'))
-# print(faker_user_generate('contact_phone'))
 
-# pprint(faker_shared_food_generate()['food_text'])
+
 # new_food_share = SharedFood(faker_shared_food_generate())
 # print(vars(new_food_share))
 # print(new_food_share.user_id)
-# new_food_share.to_json()
-
 
 # print(SharedFood.get_by_id(3))
 SharedFood(faker_shared_food_generate())
