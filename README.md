@@ -10,6 +10,8 @@ and the h3 package by uber to measure the distance between the user's address to
 take .env.example file - change it to .env\
 put it one folder above root of this application and fill the details there\
 to allow connection to the db
+create virtual env\
+pip install -r requirements.txt to install dependencies\
 
 script to create the table
 ```
