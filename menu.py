@@ -21,9 +21,8 @@ def add_food():
     for att in _GIVEN_ATTRIBUTES:
         shared_food_attributes[att] = input(f"What is the {att}?\n")
     try:
-        new_food_to_add = SharedFood(shared_food_attributes)
-        print(new_food_to_add.get_created_at())
-        print("item was added successfully.\n")
+        new_food = SharedFood(shared_food_attributes)
+        print(f"item #{new_food.shared_food_id}: {new_food.food_title} was added successfully.\n")
     except:
         print("Error adding item.")
 
@@ -52,16 +51,11 @@ distance: {distances[item.shared_food_id]:.2f}km
 
 def get_specific_food():
         food_id = input("what is the food id?\n")
-        food = None
-        while not food:
-            try:
-                food = SharedFood.get_by_id(int(food_id))
-                print(food)
-                print(food.get_created_at())
-            except:
-                print("error - maybe check if the id is valid?")
-            finally:
-                continue
+        try:
+            food = SharedFood.get_by_id(int(food_id))
+            print(food)
+        except:
+            print("error - maybe check if the id is valid?")
 
 def show_start_greeting():
     print("Welcome to food share!")
