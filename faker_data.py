@@ -33,7 +33,6 @@ def faker_shared_food_generate(type=None, faker_mode=False):
     }
 
     faked_attrs = {
-            'user_id': fake.pyint(min_value=1, max_value=500),
             'created_at': fake.date(),
             'updated_at': fake.date(),
             'published': fake.boolean(),
@@ -46,7 +45,7 @@ def faker_shared_food_generate(type=None, faker_mode=False):
 
 
 # print(faker_user_generate())
-# print(faker_user_generate('user_id'))
+# print(faker_user_generate('food_title'))
 
 
 # new_food_share = SharedFood(faker_shared_food_generate())
