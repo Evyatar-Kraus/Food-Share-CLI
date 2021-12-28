@@ -1,5 +1,5 @@
-# hackaton-2
-Food Share - preventing food waste!
+# Food Share Cli App
+### Food Share - preventing food waste!
 Command line application to share food you don't want with others (distance based)\
 Alternatively - you can see which foods other want to give away - based on proximity!
 
